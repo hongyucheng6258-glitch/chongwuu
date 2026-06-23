@@ -23,7 +23,7 @@
       <div class="chat-messages" ref="msgContainer">
         <div v-if="messages.length === 0" class="welcome-msg">
           <div class="welcome-icon">🐾</div>
-          <p>你好！我是萌宠优选的AI助手~</p>
+          <p>你好！我是初晴萌宠空间的AI助手~</p>
           <p class="hint">可以问我宠物护理、商品推荐、订单相关的问题哦！</p>
           <div class="welcome-features">
             <div class="feature-item">🛒 商品推荐</div>

@@ -34,6 +34,7 @@ E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\MemberDi
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\NotificationService.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\repository\ProductRepository.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\repository\CartItemRepository.java
+E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\GiteeUser.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\controller\UserController.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\RegisterRequest.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\CategoryService.java
@@ -49,12 +50,14 @@ E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\entity\CartItem.
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\UserProfileRequest.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\entity\User.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\repository\ReviewRepository.java
+E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\SmsSendRequest.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\repository\OrderRepository.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\DataInitializer.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\config\InterceptorConfig.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\RecommendationService.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\entity\Notification.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\controller\AddressController.java
+E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\SmsLoginRequest.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\config\MongoIndexConfig.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\common\GlobalExceptionHandler.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\AuthService.java
@@ -65,6 +68,7 @@ E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\entity\Sto
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\controller\StoreGeoController.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\PetShopApplication.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\AddressService.java
+E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\dto\GiteeCallbackRequest.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\entity\StoreGeo.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\config\RedisConfig.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\entity\Video.java

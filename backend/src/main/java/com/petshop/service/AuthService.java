@@ -11,14 +11,15 @@ import com.petshop.security.JwtUtil;
 import com.petshop.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+    private final StringRedisTemplate stringRedisTemplate;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${gitee.client-id}")
@@ -37,6 +39,13 @@ public class AuthService {
 
     @Value("${gitee.redirect-uri}")
     private String giteeRedirectUri;
+
+    /** Redis 中验证码的 key 前缀 */
+    private static final String SMS_CODE_PREFIX = "sms:code:";
+    /** 验证码有效期：5 分钟 */
+    private static final long SMS_CODE_EXPIRE = 5;
+    /** 发送验证码的冷却时间：60 秒 */
+    private static final long SMS_COOLDOWN = 60;
 
     public Map<String, Object> register(RegisterRequest req) {
         if (userRepository.existsByUsername(req.getUsername())) {
@@ -175,6 +184,80 @@ public class AuthService {
             throw new BusinessException("获取 Gitee 用户信息失败: " + e.getMessage());
         }
         throw new BusinessException("获取 Gitee 用户信息失败");
+    }
+
+    /**
+     * 发送短信验证码（模拟发送，验证码直接返回并在控制台打印）
+     */
+    public String sendSmsCode(String phone) {
+        // 检查冷却时间
+        String cooldownKey = SMS_CODE_PREFIX + "cooldown:" + phone;
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(cooldownKey))) {
+            throw new BusinessException("发送过于频繁，请稍后再试");
+        }
+
+        // 生成 6 位随机验证码
+        String code = String.format("%06d", new Random().nextInt(1000000));
+
+        // 存入 Redis，有效期 5 分钟
+        String codeKey = SMS_CODE_PREFIX + phone;
+        stringRedisTemplate.opsForValue().set(codeKey, code, SMS_CODE_EXPIRE, TimeUnit.MINUTES);
+
+        // 设置冷却时间 60 秒
+        stringRedisTemplate.opsForValue().set(cooldownKey, "1", SMS_COOLDOWN, TimeUnit.SECONDS);
+
+        // 模拟发送：在控制台打印验证码
+        System.out.println("========================================");
+        System.out.println("【短信验证码】手机号: " + phone);
+        System.out.println("【短信验证码】验证码: " + code);
+        System.out.println("【短信验证码】有效期: 5 分钟");
+        System.out.println("========================================");
+
+        return code;
+    }
+
+    /**
+     * 短信验证码登录
+     */
+    public Map<String, Object> smsLogin(String phone, String code) {
+        // 从 Redis 中获取验证码
+        String codeKey = SMS_CODE_PREFIX + phone;
+        String storedCode = stringRedisTemplate.opsForValue().get(codeKey);
+
+        if (storedCode == null) {
+            throw new BusinessException("验证码已过期，请重新获取");
+        }
+        if (!storedCode.equals(code)) {
+            throw new BusinessException("验证码错误");
+        }
+
+        // 验证码正确，删除 Redis 中的验证码（一次性使用）
+        stringRedisTemplate.delete(codeKey);
+
+        // 查找用户：优先通过手机号查找
+        User user = userRepository.findAll().stream()
+                .filter(u -> phone.equals(u.getPhone()))
+                .findFirst()
+                .orElse(null);
+
+        if (user == null) {
+            // 手机号未绑定任何用户，自动创建新用户
+            String username = "phone_" + phone.substring(phone.length() - 4);
+            String finalUsername = username;
+            int suffix = 1;
+            while (userRepository.existsByUsername(finalUsername)) {
+                finalUsername = username + suffix++;
+            }
+
+            user = new User();
+            user.setUsername(finalUsername);
+            user.setPassword(PasswordUtil.encode("sms_login_" + System.currentTimeMillis()));
+            user.setPhone(phone);
+            user.setNickname("手机用户" + phone.substring(phone.length() - 4));
+            userRepository.save(user);
+        }
+
+        return buildLoginResult(user);
     }
 
     private Map<String, Object> buildLoginResult(User user) {

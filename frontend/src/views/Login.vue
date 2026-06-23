@@ -21,8 +21,8 @@
             </svg>
           </div>
           <div>
-            <div class="brand-name">PawSpace</div>
-            <div class="brand-sub">萌宠空间</div>
+            <div class="brand-name">初晴萌宠空间</div>
+            <div class="brand-sub">让每一只萌宠都幸福</div>
           </div>
         </div>
         <h1 class="brand-title">欢迎回来 🐾</h1>
@@ -55,10 +55,25 @@
       <div class="form-container">
         <div class="form-header">
           <h2>登录账号</h2>
-          <p>欢迎回来，请输入您的账号信息</p>
+          <p>欢迎回来，请选择登录方式</p>
         </div>
 
-        <el-form ref="formRef" :model="form" :rules="rules" size="large" label-position="top">
+        <!-- 登录方式切换 -->
+        <div class="login-tabs">
+          <button
+            class="login-tab"
+            :class="{ active: loginType === 'password' }"
+            @click="loginType = 'password'"
+          >账号密码</button>
+          <button
+            class="login-tab"
+            :class="{ active: loginType === 'sms' }"
+            @click="loginType = 'sms'"
+          >手机验证码</button>
+        </div>
+
+        <!-- 账号密码登录 -->
+        <el-form v-if="loginType === 'password'" ref="formRef" :model="form" :rules="rules" size="large" label-position="top">
           <el-form-item prop="username" label="用户名">
             <el-input v-model="form.username" placeholder="请输入用户名" :prefix-icon="User" />
           </el-form-item>
@@ -68,6 +83,34 @@
           <el-form-item>
             <button type="button" class="submit-btn" :class="{ loading: loading }" :disabled="loading" @click="handleLogin">
               <span v-if="!loading">登 录</span>
+              <span v-else class="loading-dots">
+                <span></span><span></span><span></span>
+              </span>
+            </button>
+          </el-form-item>
+        </el-form>
+
+        <!-- 手机验证码登录 -->
+        <el-form v-else ref="smsFormRef" :model="smsForm" :rules="smsRules" size="large" label-position="top">
+          <el-form-item prop="phone" label="手机号">
+            <el-input v-model="smsForm.phone" placeholder="请输入手机号" :prefix-icon="Phone" maxlength="11" />
+          </el-form-item>
+          <el-form-item prop="code" label="验证码">
+            <div class="code-input-row">
+              <el-input v-model="smsForm.code" placeholder="请输入验证码" maxlength="6" @keyup.enter="handleSmsLogin" />
+              <button
+                type="button"
+                class="send-code-btn"
+                :disabled="countdown > 0 || smsSending"
+                @click="handleSendCode"
+              >
+                {{ countdown > 0 ? countdown + 's' : (smsSending ? '发送中...' : '获取验证码') }}
+              </button>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <button type="button" class="submit-btn" :class="{ loading: smsLoading }" :disabled="smsLoading" @click="handleSmsLogin">
+              <span v-if="!smsLoading">登 录</span>
               <span v-else class="loading-dots">
                 <span></span><span></span><span></span>
               </span>
@@ -109,7 +152,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { User, Lock } from '@element-plus/icons-vue'
+import { User, Lock, Phone } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { authApi } from '../api'
 import { useUserStore } from '../store/user'
@@ -121,11 +164,33 @@ const formRef = ref()
 const loading = ref(false)
 const giteeLoading = ref(false)
 
+// 登录方式切换
+const loginType = ref('password')
+
+// 账号密码登录
 const form = reactive({ username: '', password: '' })
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
+
+// 短信验证码登录
+const smsFormRef = ref()
+const smsForm = reactive({ phone: '', code: '' })
+const smsRules = {
+  phone: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+  ],
+  code: [
+    { required: true, message: '请输入验证码', trigger: 'blur' },
+    { pattern: /^\d{6}$/, message: '验证码必须是6位数字', trigger: 'blur' }
+  ]
+}
+const smsLoading = ref(false)
+const smsSending = ref(false)
+const countdown = ref(0)
+let countdownTimer = null
 
 const fillAdmin = () => { form.username = 'admin'; form.password = 'admin123' }
 const fillUser = () => { form.username = 'user'; form.password = 'user123' }
@@ -140,6 +205,50 @@ const handleLogin = async () => {
     router.push(data.user.role === 'ADMIN' ? '/admin' : '/')
   } finally {
     loading.value = false
+  }
+}
+
+// 发送短信验证码
+const handleSendCode = async () => {
+  const valid = await smsFormRef.value.validateField('phone').catch(() => false)
+  if (!valid) return
+
+  smsSending.value = true
+  try {
+    const res = await authApi.sendSmsCode({ phone: smsForm.phone })
+    ElMessage.success('验证码已发送')
+    // 在控制台打印验证码（开发调试）
+    console.log('%c【短信验证码】', 'color: #FF6B4A; font-size: 16px; font-weight: bold;')
+    console.log('%c手机号: ' + smsForm.phone, 'color: #333;')
+    console.log('%c验证码: ' + res.code, 'color: #FF6B4A; font-size: 20px; font-weight: bold;')
+    console.log('%c有效期: 5 分钟', 'color: #999;')
+
+    // 开始倒计时
+    countdown.value = 60
+    countdownTimer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(countdownTimer)
+      }
+    }, 1000)
+  } catch (e) {
+    ElMessage.error(e.message || '发送失败')
+  } finally {
+    smsSending.value = false
+  }
+}
+
+// 短信验证码登录
+const handleSmsLogin = async () => {
+  await smsFormRef.value.validate()
+  smsLoading.value = true
+  try {
+    const data = await authApi.smsLogin({ phone: smsForm.phone, code: smsForm.code })
+    userStore.setLogin(data)
+    ElMessage.success('登录成功')
+    router.push(data.user.role === 'ADMIN' ? '/admin' : '/')
+  } finally {
+    smsLoading.value = false
   }
 }
 
@@ -413,6 +522,71 @@ onMounted(() => {
   margin-top: 20px;
   font-size: 14px;
   color: var(--paw-ink-2);
+}
+
+/* ── 登录方式切换 ── */
+.login-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: var(--paw-surface);
+  padding: 4px;
+  border-radius: var(--paw-radius-full);
+}
+
+.login-tab {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--paw-radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paw-ink-2);
+  cursor: pointer;
+  transition: all var(--paw-fast);
+}
+
+.login-tab.active {
+  background: #fff;
+  color: var(--paw-coral);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── 验证码输入行 ── */
+.code-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.code-input-row .el-input {
+  flex: 1;
+}
+
+.send-code-btn {
+  padding: 0 16px;
+  border-radius: var(--paw-radius-full);
+  border: 1px solid var(--paw-coral);
+  background: transparent;
+  color: var(--paw-coral);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--paw-fast);
+  min-width: 100px;
+}
+
+.send-code-btn:hover:not(:disabled) {
+  background: var(--paw-coral);
+  color: #fff;
+}
+
+.send-code-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #999;
 }
 
 /* ── 第三方登录 ── */

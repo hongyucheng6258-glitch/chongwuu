@@ -12,7 +12,7 @@
           </svg>
         </div>
         <div class="logo-text-group">
-          <span class="logo-text">PawSpace</span>
+          <span class="logo-text">初晴萌宠空间</span>
           <span class="logo-sub">管理后台</span>
         </div>
       </div>

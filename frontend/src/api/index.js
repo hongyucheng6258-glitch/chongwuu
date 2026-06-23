@@ -5,7 +5,10 @@ export const authApi = {
   login: data => request.post('/auth/login', data),
   register: data => request.post('/auth/register', data),
   // Gitee 第三方登录
-  getGiteeAuthorizeUrl: () => request.get('/auth/gitee/authorize-url')
+  getGiteeAuthorizeUrl: () => request.get('/auth/gitee/authorize-url'),
+  // 短信验证码登录
+  sendSmsCode: data => request.post('/auth/sms/send', data),
+  smsLogin: data => request.post('/auth/sms/login', data)
 }
 
 // 用户

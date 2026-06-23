@@ -4,6 +4,8 @@ import com.petshop.common.ApiResponse;
 import com.petshop.dto.GiteeCallbackRequest;
 import com.petshop.dto.LoginRequest;
 import com.petshop.dto.RegisterRequest;
+import com.petshop.dto.SmsLoginRequest;
+import com.petshop.dto.SmsSendRequest;
 import com.petshop.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -70,5 +72,22 @@ public class AuthController {
             response.sendRedirect("http://localhost:5173/login?error=gitee_login_failed&msg=" +
                     java.net.URLEncoder.encode(e.getMessage(), java.nio.charset.StandardCharsets.UTF_8));
         }
+    }
+
+    /**
+     * 发送短信验证码
+     */
+    @PostMapping("/sms/send")
+    public ApiResponse<Map<String, String>> sendSmsCode(@Valid @RequestBody SmsSendRequest req) {
+        String code = authService.sendSmsCode(req.getPhone());
+        return ApiResponse.success("验证码已发送", Map.of("code", code));
+    }
+
+    /**
+     * 短信验证码登录
+     */
+    @PostMapping("/sms/login")
+    public ApiResponse<Map<String, Object>> smsLogin(@Valid @RequestBody SmsLoginRequest req) {
+        return ApiResponse.success("登录成功", authService.smsLogin(req.getPhone(), req.getCode()));
     }
 }

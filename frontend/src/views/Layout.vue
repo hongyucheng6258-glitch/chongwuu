@@ -12,8 +12,8 @@
               <ellipse cx="21" cy="5" rx="3" ry="3.8" fill="currentColor"/>
             </svg>
           </div>
-          <span class="logo-text">PawSpace</span>
-          <span class="logo-sub">萌宠空间</span>
+          <span class="logo-text">初晴萌宠空间</span>
+          <span class="logo-sub">让每一只萌宠都幸福</span>
         </div>
 
         <div class="search-box">
@@ -140,33 +140,33 @@
               </svg>
             </div>
             <div>
-              <div class="footer-name">PawSpace</div>
-              <div class="footer-tag">萌宠空间 · 让每一只萌宠都幸福</div>
+              <div class="footer-name">初晴萌宠空间</div>
+              <div class="footer-tag">初晴萌宠空间 · 让每一只萌宠都幸福</div>
             </div>
           </div>
           <div class="footer-links">
             <div class="footer-col">
               <h4>购物指南</h4>
-              <span>购物流程</span>
-              <span>会员介绍</span>
-              <span>常见问题</span>
+              <router-link to="/help/shopping-process">购物流程</router-link>
+              <router-link to="/help/membership">会员介绍</router-link>
+              <router-link to="/help/faq">常见问题</router-link>
             </div>
             <div class="footer-col">
               <h4>配送方式</h4>
-              <span>上门自提</span>
-              <span>极速配送</span>
-              <span>配送费用</span>
+              <router-link to="/help/self-pickup">上门自提</router-link>
+              <router-link to="/help/express-delivery">极速配送</router-link>
+              <router-link to="/help/shipping-fees">配送费用</router-link>
             </div>
             <div class="footer-col">
               <h4>售后服务</h4>
-              <span>退换货政策</span>
-              <span>退款说明</span>
-              <span>返修退换</span>
+              <router-link to="/help/return-policy">退换货政策</router-link>
+              <router-link to="/help/refund-guide">退款说明</router-link>
+              <router-link to="/help/repair-return">返修退换</router-link>
             </div>
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© 2024 PawSpace · 萌宠空间 · 宠物用品商城</span>
+          <span>© 2026 初晴萌宠空间 · 宠物用品商城</span>
         </div>
       </div>
     </footer>
@@ -507,14 +507,17 @@ router.afterEach(() => {
   margin-bottom: 4px;
 }
 
-.footer-col span {
+.footer-col span,
+.footer-col a {
   color: var(--paw-ink-4);
   font-size: 13px;
   cursor: pointer;
   transition: color var(--paw-fast);
+  text-decoration: none;
 }
 
-.footer-col span:hover {
+.footer-col span:hover,
+.footer-col a:hover {
   color: var(--paw-coral);
 }
 

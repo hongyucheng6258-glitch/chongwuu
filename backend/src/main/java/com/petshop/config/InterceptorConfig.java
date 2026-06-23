@@ -23,6 +23,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         // 认证
                         "/api/auth/login",
                         "/api/auth/register",
+                        // 短信验证码登录
+                        "/api/auth/sms/send",
+                        "/api/auth/sms/login",
                         // Gitee 第三方登录
                         "/api/auth/gitee/callback",
                         "/api/auth/gitee/authorize-url"

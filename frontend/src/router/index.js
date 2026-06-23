@@ -27,7 +27,17 @@ const routes = [
       // 消息通知
       { path: 'notifications', name: 'Notifications', component: () => import('../views/Notifications.vue'), meta: { title: '消息中心', requireAuth: true } },
       // 订单详情
-      { path: 'order/:id', name: 'OrderDetail', component: () => import('../views/OrderDetail.vue'), meta: { title: '订单详情', requireAuth: true } }
+      { path: 'order/:id', name: 'OrderDetail', component: () => import('../views/OrderDetail.vue'), meta: { title: '订单详情', requireAuth: true } },
+      // 帮助中心
+      { path: 'help/shopping-process', name: 'ShoppingProcess', component: () => import('../views/help/ShoppingProcess.vue'), meta: { title: '购物流程' } },
+      { path: 'help/membership', name: 'Membership', component: () => import('../views/help/Membership.vue'), meta: { title: '会员介绍' } },
+      { path: 'help/faq', name: 'Faq', component: () => import('../views/help/Faq.vue'), meta: { title: '常见问题' } },
+      { path: 'help/self-pickup', name: 'SelfPickup', component: () => import('../views/help/SelfPickup.vue'), meta: { title: '上门自提' } },
+      { path: 'help/express-delivery', name: 'ExpressDelivery', component: () => import('../views/help/ExpressDelivery.vue'), meta: { title: '极速配送' } },
+      { path: 'help/shipping-fees', name: 'ShippingFees', component: () => import('../views/help/ShippingFees.vue'), meta: { title: '配送费用' } },
+      { path: 'help/return-policy', name: 'ReturnPolicy', component: () => import('../views/help/ReturnPolicy.vue'), meta: { title: '退换货政策' } },
+      { path: 'help/refund-guide', name: 'RefundGuide', component: () => import('../views/help/RefundGuide.vue'), meta: { title: '退款说明' } },
+      { path: 'help/repair-return', name: 'RepairReturn', component: () => import('../views/help/RepairReturn.vue'), meta: { title: '返修退换' } }
     ]
   },
   {
@@ -54,7 +64,7 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  document.title = (to.meta.title ? to.meta.title + ' - ' : '') + '萌宠优选'
+  document.title = (to.meta.title ? to.meta.title + ' - ' : '') + '初晴萌宠空间'
   const userStore = useUserStore()
 
   if (to.meta.requireAuth && !userStore.isLogin) {

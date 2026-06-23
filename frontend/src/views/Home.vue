@@ -68,7 +68,7 @@
           <div class="hero-circle">
             <div class="hero-circle-inner">
               <span class="circle-emoji">🐶</span>
-              <span class="circle-text">PawSpace</span>
+              <span class="circle-text">初晴萌宠空间</span>
             </div>
           </div>
         </div>

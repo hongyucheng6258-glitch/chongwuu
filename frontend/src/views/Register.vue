@@ -21,8 +21,8 @@
             </svg>
           </div>
           <div>
-            <div class="brand-name">PawSpace</div>
-            <div class="brand-sub">萌宠空间</div>
+            <div class="brand-name">初晴萌宠空间</div>
+            <div class="brand-sub">让每一只萌宠都幸福</div>
           </div>
         </div>
         <h1 class="brand-title">加入我们 🎉</h1>
@@ -55,7 +55,7 @@
       <div class="form-container">
         <div class="form-header">
           <h2>注册账号</h2>
-          <p>加入 PawSpace，开启养宠之旅</p>
+          <p>加入初晴萌宠空间，开启养宠之旅</p>
         </div>
 
         <el-form ref="formRef" :model="form" :rules="rules" size="large" label-position="top">

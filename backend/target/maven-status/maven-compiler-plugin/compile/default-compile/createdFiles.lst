@@ -22,6 +22,7 @@ com\petshop\entity\Video.class
 com\petshop\dto\OrderReturnRequest.class
 com\petshop\dto\ProductRequest.class
 com\petshop\service\AuthService.class
+com\petshop\dto\SmsLoginRequest.class
 com\petshop\repository\OrderRepository.class
 com\petshop\repository\NotificationRepository.class
 com\petshop\service\DataInitializer.class
@@ -29,6 +30,7 @@ com\petshop\service\CartService.class
 com\petshop\repository\CartItemRepository.class
 com\petshop\entity\Category.class
 com\petshop\dto\AddressRequest.class
+com\petshop\dto\GiteeUser.class
 com\petshop\service\UserService.class
 com\petshop\security\JwtInterceptor.class
 com\petshop\mongo\repository\StoreProductRepository.class
@@ -63,6 +65,7 @@ com\petshop\service\NotificationService.class
 com\petshop\security\JwtUtil.class
 com\petshop\PetShopApplication.class
 com\petshop\common\GlobalExceptionHandler.class
+com\petshop\dto\SmsSendRequest.class
 com\petshop\repository\StoreRepository.class
 com\petshop\security\CurrentUser.class
 com\petshop\service\CategoryService.class
@@ -83,3 +86,4 @@ com\petshop\entity\Store.class
 com\petshop\controller\NotificationController.class
 com\petshop\service\ReviewService.class
 com\petshop\repository\ProductRepository.class
+com\petshop\dto\GiteeCallbackRequest.class

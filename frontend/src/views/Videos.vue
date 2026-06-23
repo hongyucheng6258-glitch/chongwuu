@@ -21,8 +21,14 @@
         <div class="video-grid" v-else>
           <div v-for="video in videos" :key="video.id" class="video-card" @click="$router.push(`/video/${video.id}`)">
             <div class="video-cover">
-              <div class="video-placeholder">
+              <img v-if="video.coverUrl" :src="video.coverUrl" class="cover-img" alt="封面" />
+              <div v-else class="cover-fallback" :style="{ background: getGradient(video.id) }">
                 <svg viewBox="0 0 24 24" width="48" height="48" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
+              </div>
+              <div class="play-overlay">
+                <div class="play-btn">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
+                </div>
               </div>
               <span class="video-category">{{ categoryName(video.category) }}</span>
             </div>
@@ -30,7 +36,7 @@
               <h4>{{ video.title }}</h4>
               <p>{{ video.description || '暂无简介' }}</p>
               <div class="video-meta">
-                <span>👁 {{ video.viewCount || 0 }} 次观看</span>
+                <span><el-icon><View /></el-icon> {{ video.viewCount || 0 }} 次观看</span>
               </div>
             </div>
           </div>
@@ -46,6 +52,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { videoApi } from '../api'
+import { View } from '@element-plus/icons-vue'
 
 const videos = ref([])
 const loading = ref(false)
@@ -53,6 +60,19 @@ const page = ref(0)
 const size = 12
 const total = ref(0)
 const activeCategory = ref('')
+
+const gradients = [
+  'linear-gradient(135deg, #667eea, #764ba2)',
+  'linear-gradient(135deg, #f093fb, #f5576c)',
+  'linear-gradient(135deg, #4facfe, #00f2fe)',
+  'linear-gradient(135deg, #43e97b, #38f9d7)',
+  'linear-gradient(135deg, #fa709a, #fee140)',
+  'linear-gradient(135deg, #a8edea, #fed6e3)',
+  'linear-gradient(135deg, #ff9a9e, #fecfef)',
+  'linear-gradient(135deg, #fbc2eb, #a6c1ee)',
+]
+
+const getGradient = (id) => gradients[(id - 1) % gradients.length]
 
 onMounted(() => loadVideos())
 
@@ -92,12 +112,18 @@ const categoryName = (c) => {
 @media (max-width: 500px) { .video-grid { grid-template-columns: 1fr; } }
 .video-card { border-radius: 12px; overflow: hidden; cursor: pointer; background: white; border: 1px solid var(--el-border-color); transition: all 0.2s; }
 .video-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-.video-cover { height: 160px; background: linear-gradient(135deg, #667eea, #764ba2); position: relative; display: flex; align-items: center; justify-content: center; }
-.video-placeholder { width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.video-category { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+.video-cover { height: 160px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.cover-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.video-card:hover .cover-img { transform: scale(1.05); }
+.cover-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.video-card:hover .play-overlay { opacity: 1; }
+.play-btn { width: 56px; height: 56px; background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.5); }
+.video-category { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; z-index: 2; }
 .video-info { padding: 12px; }
 .video-info h4 { margin: 0 0 6px; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .video-info p { margin: 0 0 8px; font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.video-meta { font-size: 12px; color: #aaa; }
+.video-meta { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 4px; }
+.video-meta .el-icon { font-size: 14px; }
 .pagination-wrap { margin-top: 24px; display: flex; justify-content: center; }
 </style>

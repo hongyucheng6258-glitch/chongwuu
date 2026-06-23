@@ -66,6 +66,7 @@ E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\controller
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\PetShopApplication.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\AddressService.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\entity\StoreGeo.java
+E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\config\RedisConfig.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\entity\Video.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\mongo\repository\StoreGeoRepository.java
 E:\作业\实训\宠物商城\backend\src\main\java\com\petshop\service\VideoService.java

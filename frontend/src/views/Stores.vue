@@ -19,7 +19,8 @@
       </div>
 
       <!-- 定位状态提示 -->
-      <el-alert v-if="!userLocation && !loading" title="点击「定位我」获取当前位置，即可搜索附近宠物商店" type="info" :closable="false" style="margin-bottom: 16px;" />
+      <el-alert v-if="!userLocation && !loading && !hasLocalStores" title="点击「定位我」获取当前位置，即可搜索附近宠物商店" type="info" :closable="false" style="margin-bottom: 16px;" />
+      <el-alert v-if="!userLocation && hasLocalStores" title="当前显示本地数据库中的商店，点击「定位我」可搜索附近真实商店" type="warning" :closable="false" style="margin-bottom: 16px;" />
       <el-alert v-if="userLocation" :title="`当前位置：${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`" type="success" :closable="false" style="margin-bottom: 16px;" />
 
       <!-- 地图容器 -->
@@ -36,6 +37,7 @@
         <div v-show="mapType === 'amap'" id="stores-map" class="map-container"></div>
         <div v-show="mapType === 'list'" class="list-view">
           <el-empty v-if="stores.length === 0" description="暂无数据，请先定位并搜索" />
+          <el-alert v-if="stores.length > 0 && stores[0]?.isLocal" title="当前显示本地数据库商店" type="info" :closable="false" style="margin-bottom: 12px;" />
           <div v-for="(store, idx) in stores" :key="idx" class="store-card" @click="navigateTo(store)">
             <div class="store-icon">{{ store.type === '宠物医院' ? '🏥' : (store.type === '宠物美容' ? '✂️' : '🏪') }}</div>
             <div class="store-info">
@@ -52,6 +54,7 @@
       <!-- 商店列表 -->
       <div class="stores-list" v-loading="loading" v-if="mapType === 'amap'">
         <el-empty v-if="stores.length === 0 && !loading" description="暂无数据，请先定位并搜索附近宠物商店" />
+        <el-alert v-if="stores.length > 0 && stores[0]?.isLocal" title="当前显示本地数据库商店，点击「定位我」可搜索附近真实商店" type="info" :closable="false" style="margin-bottom: 12px;" />
         <div v-for="(store, idx) in stores" :key="idx" class="store-card" @click="navigateTo(store)">
           <div class="store-icon">{{ store.type === '宠物医院' ? '🏥' : (store.type === '宠物美容' ? '✂️' : '🏪') }}</div>
           <div class="store-info">
@@ -72,6 +75,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { Search, Location } from '@element-plus/icons-vue'
+import { storeApi } from '../api'
 
 const stores = ref([])
 const loading = ref(false)
@@ -80,6 +84,7 @@ const locating = ref(false)
 const keyword = ref('')
 const mapType = ref('amap')
 const userLocation = ref(null)
+const hasLocalStores = ref(false)
 
 // 高德地图相关
 let map = null
@@ -87,6 +92,7 @@ let markers = []
 
 onMounted(() => {
   initAmap()
+  loadLocalStores()
 })
 
 // 初始化高德地图（只加载地图，不加载数据）
@@ -380,6 +386,33 @@ const navigateTo = (store) => {
     url += `&from=${userLocation.value.lng},${userLocation.value.lat},我的位置`
   }
   window.open(url, '_blank')
+}
+
+// 加载本地数据库商店（无定位时默认显示）
+const loadLocalStores = async () => {
+  loading.value = true
+  try {
+    const data = await storeApi.list()
+    stores.value = (data || []).map(s => ({
+      name: s.name,
+      address: s.address,
+      longitude: s.longitude,
+      latitude: s.latitude,
+      distance: '',
+      type: s.description || '宠物商店',
+      tel: s.phone || '',
+      businessHours: s.businessHours || '',
+      isLocal: true
+    }))
+    hasLocalStores.value = stores.value.length > 0
+    // 如果有本地商店且地图已初始化，添加标记
+    if (hasLocalStores.value && mapType.value === 'amap' && map) {
+      nextTick(() => addStoreMarkers())
+    }
+  } catch (e) {
+    console.error('加载本地商店失败:', e)
+  }
+  loading.value = false
 }
 
 // 切换地图类型

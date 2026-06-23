@@ -19,6 +19,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/petshop
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
 
 jwt:
   secret: petshop-secret-key-for-jwt-token-generation-must-be-long-enough-2024-pet

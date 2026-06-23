@@ -1,3 +1,4 @@
+com\petshop\config\RedisConfig.class
 com\petshop\mongo\service\StoreGeoService.class
 com\petshop\repository\VideoRepository.class
 com\petshop\service\StatisticsService.class

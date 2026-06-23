@@ -198,14 +198,30 @@ public class DataInitializer implements CommandLineRunner {
     private void initVideos() {
         if (videoRepository.count() == 0) {
             List<Video> videos = List.of(
-                    createVideo("猫咪正确喂养指南", "详细讲解猫咪日常喂养的注意事项和科学方法。", "PET_FOOD", 1L),
-                    createVideo("狗狗基础训练教程", "教你在家训练狗狗基本指令，建立良好行为习惯。", "PET_PLAY", 2L),
-                    createVideo("如何选择适合的猫粮", "不同年龄段猫咪的猫粮选择指南，帮你避开选购误区。", "PET_FOOD", 1L),
-                    createVideo("给狗狗洗澡的技巧", "在家给狗狗洗澡的正确步骤和注意事项。", "PET_CARE", 2L),
-                    createVideo("皇家猫粮深度测评", "皇家室内成猫粮全面测评，分析成分和适口性。", "PRODUCT_INTRO", 1L),
-                    createVideo("冠能犬粮开箱评测", "冠能中型犬成犬粮实际体验，狗狗爱吃吗？", "PRODUCT_INTRO", 2L),
-                    createVideo("猫咪玩具推荐TOP5", "评选最受猫咪欢迎的5款玩具，主人必看。", "PRODUCT_INTRO", 1L),
-                    createVideo("萌宠日常搞笑合集", "铲屎官和毛孩子的欢乐日常，治愈你的不开心。", "PET_PLAY", null)
+                    createVideo("猫咪正确喂养指南", "详细讲解猫咪日常喂养的注意事项和科学方法。", "PET_FOOD", 1L,
+                            "/videos/video_cat_feeding_guide.mp4",
+                            "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=640&h=360&fit=crop"),
+                    createVideo("狗狗基础训练教程", "教你在家训练狗狗基本指令，建立良好行为习惯。", "PET_PLAY", 2L,
+                            "/videos/video_dog_training.mp4",
+                            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=640&h=360&fit=crop"),
+                    createVideo("如何选择适合的猫粮", "不同年龄段猫咪的猫粮选择指南，帮你避开选购误区。", "PET_FOOD", 1L,
+                            "/videos/video_cat_food_selection.mp4",
+                            "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=640&h=360&fit=crop"),
+                    createVideo("给狗狗洗澡的技巧", "在家给狗狗洗澡的正确步骤和注意事项。", "PET_CARE", 2L,
+                            "/videos/video_dog_bathing.mp4",
+                            "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=640&h=360&fit=crop"),
+                    createVideo("皇家猫粮深度测评", "皇家室内成猫粮全面测评，分析成分和适口性。", "PRODUCT_INTRO", 1L,
+                            "/videos/video_cat_food_review.mp4",
+                            "https://images.unsplash.com/photo-1513245543132-31f507417b26?w=640&h=360&fit=crop"),
+                    createVideo("冠能犬粮开箱评测", "冠能中型犬成犬粮实际体验，狗狗爱吃吗？", "PRODUCT_INTRO", 2L,
+                            "/videos/video_dog_food_review.mp4",
+                            "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=640&h=360&fit=crop"),
+                    createVideo("猫咪玩具推荐TOP5", "评选最受猫咪欢迎的5款玩具，主人必看。", "PRODUCT_INTRO", 1L,
+                            "/videos/video_cat_toys_top5.mp4",
+                            "https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=640&h=360&fit=crop"),
+                    createVideo("萌宠日常搞笑合集", "铲屎官和毛孩子的欢乐日常，治愈你的不开心。", "PET_PLAY", null,
+                            "/videos/video_cute_pets_funny.mp4",
+                            "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=640&h=360&fit=crop")
             );
             videoRepository.saveAll(videos);
             log.info("初始化视频: {} 个", videos.size());
@@ -225,15 +241,15 @@ public class DataInitializer implements CommandLineRunner {
         return s;
     }
 
-    private Video createVideo(String title, String description, String category, Long productId) {
+    private Video createVideo(String title, String description, String category, Long productId, String videoUrl, String coverUrl) {
         Video v = new Video();
         v.setTitle(title);
         v.setDescription(description);
         v.setCategory(category);
         v.setProductId(productId);
-        v.setVideoUrl("");  // 演示数据暂无实际视频URL
-        v.setCoverUrl("");
-        v.setViewCount(0L);
+        v.setVideoUrl(videoUrl);
+        v.setCoverUrl(coverUrl);
+        v.setViewCount((long) (Math.random() * 50));
         return v;
     }
 

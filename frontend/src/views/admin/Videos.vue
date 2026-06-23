@@ -12,8 +12,14 @@
         <template #default="{ row }">{{ categoryName(row.category) }}</template>
       </el-table-column>
       <el-table-column prop="viewCount" label="播放量" width="80" />
-      <el-table-column label="关联商品" width="80">
-        <template #default="{ row }">{{ row.productId ? '是' : '否' }}</template>
+      <el-table-column label="关联商品" width="120">
+        <template #default="{ row }">
+          <span v-if="row.productId && productNameMap[row.productId]" class="product-link" @click="$router.push(`/product/${row.productId}`)">
+            {{ productNameMap[row.productId] }}
+          </span>
+          <span v-else-if="row.productId">ID: {{ row.productId }}</span>
+          <span v-else style="color:#999">未关联</span>
+        </template>
       </el-table-column>
       <el-table-column label="操作" width="140">
         <template #default="{ row }">
@@ -42,8 +48,22 @@
         <el-form-item label="封面URL">
           <el-input v-model="form.coverUrl" placeholder="封面图片链接" />
         </el-form-item>
-        <el-form-item label="关联商品ID">
-          <el-input v-model="form.productId" placeholder="填商品ID，留空则不关联" />
+        <el-form-item label="关联商品">
+          <el-select
+            v-model="form.productId"
+            filterable
+            clearable
+            placeholder="选择关联商品（可留空）"
+            :loading="productLoading"
+            style="width:100%"
+          >
+            <el-option
+              v-for="p in allProducts"
+              :key="p.id"
+              :label="`${p.name}（ID: ${p.id}）`"
+              :value="p.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="form.description" type="textarea" :rows="2" placeholder="视频描述..." />
@@ -59,7 +79,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { videoApi } from '../../api'
+import { videoApi, productApi } from '../../api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const videos = ref([])
@@ -68,8 +88,34 @@ const visible = ref(false)
 const editing = ref(null)
 const saving = ref(false)
 const form = ref({ title: '', category: '', videoUrl: '', coverUrl: '', productId: null, description: '' })
+const productLoading = ref(false)
+const allProducts = ref([])
+const productNameMap = ref({})
 
-onMounted(async () => { loading.value = true; try { const data = await videoApi.list(0, 100); videos.value = data.content || [] } catch (e) {}; loading.value = false })
+// 加载全部商品列表（用于下拉选择和表格显示）
+const loadAllProducts = async () => {
+  productLoading.value = true
+  try {
+    const data = await productApi.list({ page: 0, size: 200 })
+    allProducts.value = data.content || []
+    const map = {}
+    allProducts.value.forEach(p => { map[p.id] = p.name })
+    productNameMap.value = map
+  } catch (e) {}
+  productLoading.value = false
+}
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const [videoData] = await Promise.all([
+      videoApi.list(0, 100),
+      loadAllProducts()
+    ])
+    videos.value = videoData.content || []
+  } catch (e) {}
+  loading.value = false
+})
 
 const showDialog = (video) => {
   editing.value = video
@@ -106,4 +152,6 @@ const categoryName = (c) => ({ PET_PLAY: '萌宠日常', PET_FOOD: '喂养指南
 .admin-page { padding: 20px; }
 .page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .page-head h2 { margin: 0; font-size: 20px; }
+.product-link { color: #409eff; cursor: pointer; }
+.product-link:hover { text-decoration: underline; }
 </style>

@@ -38,6 +38,10 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    /** Gitee 第三方登录关联 ID（通过数据库索引保证唯一） */
+    @Column(name = "gitee_id")
+    private Long giteeId;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {

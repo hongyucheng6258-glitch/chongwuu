@@ -22,7 +22,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         // 认证
                         "/api/auth/login",
-                        "/api/auth/register"
+                        "/api/auth/register",
+                        // Gitee 第三方登录
+                        "/api/auth/gitee/callback",
+                        "/api/auth/gitee/authorize-url"
                         // 其他公开路径在 JwtInterceptor 内部处理（支持携带token时解析用户上下文）
                 );
     }

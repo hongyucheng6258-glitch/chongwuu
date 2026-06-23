@@ -36,6 +36,13 @@ zhipu:
   max-tokens: 1024
   temperature: 0.7
 
+# Gitee OAuth2 配置
+# 在 https://gitee.com/oauth/applications 创建第三方应用获取
+gitee:
+  client-id: a4f1fb46f5e3010df26c24a2a049d7bdad3ac988c0ee9f19d619befe64967c3a
+  client-secret: ddd9e4f4361df133b58a45dde14d44e0a7e8c9d8ec2b192800fd2dac1058a9eb
+  redirect-uri: http://localhost:8080/api/auth/gitee/callback
+
 logging:
   level:
     com.petshop: info

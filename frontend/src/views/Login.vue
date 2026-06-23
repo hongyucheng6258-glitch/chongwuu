@@ -79,6 +79,17 @@
           还没有账号？<el-link type="primary" @click="$router.push('/register')">立即注册 →</el-link>
         </div>
 
+        <!-- 第三方登录 -->
+        <el-divider>第三方账号登录</el-divider>
+        <div class="social-login">
+          <button class="social-btn gitee" @click="handleGiteeLogin" :disabled="giteeLoading">
+            <svg viewBox="0 0 24 24" class="social-icon">
+              <path d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.592.593v1.482a.594.594 0 0 1-.593.592H9.777c-.982 0-1.778.796-1.778 1.778v5.926c0 .982.796 1.778 1.778 1.778h4.444c.982 0 1.778-.796 1.778-1.778v-.296a.593.593 0 0 0-.592-.593h-2.963a.593.593 0 0 1-.593-.592v-1.482a.593.593 0 0 1 .593-.592h4.63c.982 0 1.778.796 1.778 1.778v2.667a4 4 0 0 1-4 4H8.074a4 4 0 0 1-4-4V9.333a4 4 0 0 1 4-4h9.074c.164 0 .328 0 .49.002l.436-.002z" fill="currentColor"/>
+            </svg>
+            <span>{{ giteeLoading ? '跳转中...' : 'Gitee 登录' }}</span>
+          </button>
+        </div>
+
         <el-divider>快速体验</el-divider>
         <div class="test-accounts">
           <button class="test-tag admin" @click="fillAdmin">
@@ -96,17 +107,19 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { authApi } from '../api'
 import { useUserStore } from '../store/user'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const formRef = ref()
 const loading = ref(false)
+const giteeLoading = ref(false)
 
 const form = reactive({ username: '', password: '' })
 const rules = {
@@ -129,6 +142,40 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+
+// Gitee 第三方登录
+const handleGiteeLogin = async () => {
+  giteeLoading.value = true
+  try {
+    const res = await authApi.getGiteeAuthorizeUrl()
+    // 跳转到 Gitee 授权页面
+    window.location.href = res.authorizeUrl
+  } catch (e) {
+    ElMessage.error('获取 Gitee 授权链接失败')
+  } finally {
+    giteeLoading.value = false
+  }
+}
+
+// 处理 Gitee 回调
+onMounted(() => {
+  const { giteeLogin, token, user, error, msg } = route.query
+  if (giteeLogin === '1' && token && user) {
+    try {
+      const userData = JSON.parse(decodeURIComponent(user))
+      userStore.setLogin({ token, user: userData })
+      ElMessage.success('Gitee 登录成功')
+      router.replace(userData.role === 'ADMIN' ? '/admin' : '/')
+    } catch (e) {
+      ElMessage.error('Gitee 登录数据解析失败')
+    }
+  } else if (error) {
+    const errorMsg = msg ? decodeURIComponent(msg) : 'Gitee 登录失败'
+    ElMessage.error(errorMsg)
+    // 清除 URL 中的错误参数
+    router.replace('/login')
+  }
+})
 </script>
 
 <style scoped>
@@ -368,6 +415,54 @@ const handleLogin = async () => {
   color: var(--paw-ink-2);
 }
 
+/* ── 第三方登录 ── */
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--paw-radius-full);
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paw-ink);
+  transition: all var(--paw-fast);
+}
+
+.social-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.social-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.social-btn.gitee {
+  border-color: #c71d23;
+  color: #c71d23;
+}
+
+.social-btn.gitee:hover:not(:disabled) {
+  background: #c71d23;
+  color: #fff;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── Test Accounts ── */
 .test-accounts {
   display: flex;
   flex-direction: column;

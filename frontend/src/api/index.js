@@ -3,7 +3,9 @@ import request from '../utils/request'
 // 鉴权
 export const authApi = {
   login: data => request.post('/auth/login', data),
-  register: data => request.post('/auth/register', data)
+  register: data => request.post('/auth/register', data),
+  // Gitee 第三方登录
+  getGiteeAuthorizeUrl: () => request.get('/auth/gitee/authorize-url')
 }
 
 // 用户

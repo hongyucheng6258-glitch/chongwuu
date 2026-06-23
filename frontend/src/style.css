@@ -1,0 +1,345 @@
+/* ============================================================
+   PawSpace Design System — 萌宠空间
+   温暖有机的宠物商城视觉系统
+   ============================================================ */
+
+:root {
+  /* ── 品牌色 · Brand ── */
+  --paw-coral: #FF6B4A;
+  --paw-coral-light: #FF8E6E;
+  --paw-coral-dark: #E54B2A;
+  --paw-coral-50: #FFF1ED;
+  --paw-coral-100: #FFE0D6;
+
+  --paw-sage: #5CB87A;
+  --paw-sage-light: #7DD49A;
+  --paw-sage-50: #EAF7EE;
+  --paw-sage-100: #D4EFDD;
+
+  --paw-amber: #FFB830;
+  --paw-amber-50: #FFF6E0;
+
+  --paw-sky: #4A9FE8;
+  --paw-sky-50: #E8F2FC;
+
+  --paw-rose: #F06292;
+  --paw-rose-50: #FCE8EF;
+
+  /* ── 中性色 · Surface ── */
+  --paw-cream: #FFFBF5;
+  --paw-bg: #FAF6F0;
+  --paw-surface: #FDF8F2;
+  --paw-card: #FFFFFF;
+
+  --paw-ink: #2D2A26;
+  --paw-ink-2: #5C554F;
+  --paw-ink-3: #8E867E;
+  --paw-ink-4: #B8B0A8;
+
+  --paw-border: #ECE5DB;
+  --paw-border-light: #F5F0E8;
+
+  /* ── 投影 · Warm Shadows ── */
+  --paw-shadow-xs: 0 1px 3px rgba(45, 42, 38, 0.04);
+  --paw-shadow-sm: 0 2px 8px rgba(45, 42, 38, 0.06);
+  --paw-shadow-md: 0 8px 24px rgba(45, 42, 38, 0.08);
+  --paw-shadow-lg: 0 16px 48px rgba(45, 42, 38, 0.12);
+  --paw-shadow-xl: 0 24px 64px rgba(45, 42, 38, 0.16);
+  --paw-shadow-coral: 0 8px 24px rgba(255, 107, 74, 0.22);
+  --paw-shadow-sage: 0 8px 24px rgba(92, 184, 122, 0.22);
+
+  /* ── 圆角 · Radius ── */
+  --paw-radius-sm: 10px;
+  --paw-radius-md: 16px;
+  --paw-radius-lg: 24px;
+  --paw-radius-xl: 32px;
+  --paw-radius-full: 999px;
+
+  /* ── 间距 · Spacing ── */
+  --paw-space-xs: 4px;
+  --paw-space-sm: 8px;
+  --paw-space-md: 16px;
+  --paw-space-lg: 24px;
+  --paw-space-xl: 40px;
+  --paw-space-2xl: 64px;
+
+  /* ── 动效 · Transitions ── */
+  --paw-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --paw-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --paw-fast: 0.15s var(--paw-ease);
+  --paw-normal: 0.3s var(--paw-ease);
+  --paw-slow: 0.5s var(--paw-ease);
+
+  /* ── 字体 · Typography ── */
+  --paw-font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Reset ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: var(--paw-font);
+  background-color: var(--paw-bg);
+  color: var(--paw-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ── 爪印纹理背景 ── */
+.paw-pattern {
+  position: relative;
+}
+
+.paw-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF6B4A' fill-opacity='0.03'%3E%3Cellipse cx='40' cy='48' rx='9' ry='11'/%3E%3Cellipse cx='26' cy='32' rx='4.5' ry='6'/%3E%3Cellipse cx='54' cy='32' rx='4.5' ry='6'/%3E%3Cellipse cx='18' cy='44' rx='4' ry='5'/%3E%3Cellipse cx='62' cy='44' rx='4' ry='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.paw-pattern > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 有机圆形装饰 ── */
+.blob {
+  position: absolute;
+  border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%;
+  filter: blur(2px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── 工具类 ── */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--paw-space-lg);
+}
+
+.text-primary {
+  color: var(--paw-coral);
+}
+
+.price {
+  color: var(--paw-coral);
+  font-weight: 800;
+}
+
+/* ── Element Plus 主题覆盖 ── */
+
+/* Primary 按钮 */
+.el-button--primary {
+  --el-button-bg-color: var(--paw-coral);
+  --el-button-border-color: var(--paw-coral);
+  --el-button-hover-bg-color: var(--paw-coral-light);
+  --el-button-hover-border-color: var(--paw-coral-light);
+  --el-button-active-bg-color: var(--paw-coral-dark);
+  --el-button-active-border-color: var(--paw-coral-dark);
+  font-weight: 600;
+  border-radius: var(--paw-radius-full);
+  box-shadow: var(--paw-shadow-coral);
+  transition: all var(--paw-normal);
+}
+
+.el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 107, 74, 0.3);
+}
+
+.el-button--primary:active {
+  transform: translateY(0);
+}
+
+/* Default 按钮 */
+.el-button.is-round {
+  border-radius: var(--paw-radius-full);
+}
+
+.el-button--default {
+  border-radius: var(--paw-radius-full);
+  border-color: var(--paw-border);
+  color: var(--paw-ink-2);
+  transition: all var(--paw-normal);
+}
+
+.el-button--default:hover {
+  border-color: var(--paw-coral);
+  color: var(--paw-coral);
+  background: var(--paw-coral-50);
+}
+
+/* Input */
+.el-input__wrapper {
+  border-radius: var(--paw-radius-full) !important;
+  box-shadow: 0 0 0 1px var(--paw-border) inset !important;
+  padding: 4px 16px !important;
+  transition: all var(--paw-fast) !important;
+}
+
+.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--paw-coral-light) inset !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 2px var(--paw-coral) inset !important;
+}
+
+.el-input--large .el-input__wrapper {
+  padding: 6px 18px !important;
+}
+
+/* Input group append */
+.el-input-group__append {
+  border-radius: 0 var(--paw-radius-full) var(--paw-radius-full) 0 !important;
+  background: var(--paw-coral) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.el-input-group__append .el-button {
+  color: #fff !important;
+}
+
+.el-input-group__append .el-button:hover {
+  background: var(--paw-coral-dark) !important;
+}
+
+/* Card */
+.el-card {
+  border-radius: var(--paw-radius-lg) !important;
+  border: none !important;
+  box-shadow: var(--paw-shadow-sm) !important;
+}
+
+/* Tag */
+.el-tag {
+  border-radius: var(--paw-radius-full) !important;
+  font-weight: 600;
+}
+
+/* Pagination */
+.el-pagination.is-background .el-pager li {
+  border-radius: var(--paw-radius-sm) !important;
+  margin: 0 3px;
+}
+
+.el-pagination.is-background .el-pager li.is-active {
+  background: var(--paw-coral) !important;
+}
+
+/* Dropdown */
+.el-dropdown-menu {
+  border-radius: var(--paw-radius-md) !important;
+  border: 1px solid var(--paw-border) !important;
+  box-shadow: var(--paw-shadow-lg) !important;
+  padding: 6px !important;
+}
+
+.el-dropdown-menu__item {
+  border-radius: var(--paw-radius-sm) !important;
+  margin: 2px 0;
+}
+
+.el-dropdown-menu__item:hover {
+  background: var(--paw-coral-50) !important;
+  color: var(--paw-coral) !important;
+}
+
+/* Empty */
+.el-empty__image svg {
+  width: 120px;
+}
+
+/* Form */
+.el-form-item__label {
+  color: var(--paw-ink-2) !important;
+  font-weight: 600;
+}
+
+/* Divider */
+.el-divider__text {
+  background: var(--paw-card) !important;
+  color: var(--paw-ink-3) !important;
+  font-size: 13px;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--paw-border);
+  border-radius: var(--paw-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--paw-ink-4);
+}
+
+/* ── 动画 ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes blob-morph {
+  0%, 100% { border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%; }
+  33% { border-radius: 60% 50% 40% 60% / 40% 50% 60% 50%; }
+  66% { border-radius: 40% 60% 50% 40% / 60% 40% 50% 60%; }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-blob {
+  animation: blob-morph 8s ease-in-out infinite;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s var(--paw-ease) both;
+}
+
+/* 延迟工具类 */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
